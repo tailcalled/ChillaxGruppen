@@ -1,0 +1,71 @@
+\documentclass[a4paper]{article}
+
+\input{preamble.tex}
+\usepackage{amssymb}
+
+\title{DMA 9i}
+\author{HELLO}
+
+\begin{document}
+
+\maketitle
+
+\section*{Part 1}
+
+We are given 3 linear homogeneous relation of degree 2 describing the run time of 3 different algorithms.
+
+\begin{equation} \label{eq1} u_{n} = u_{n-1} + 4 \cdot u_{n-2} \end{equation}
+\begin{equation} \label{eq2} u_{n} = 2 \cdot u_{n-1} + 3 \cdot u_{n-2} \end{equation}
+\begin{equation} \label{eq3} u_{n} = 9 \cdot u_{n-2} \end{equation}
+\subsection*{a}
+For each algoritm we have been asked to find the characteristic equation and its roots.
+
+The characteristic equation for equation \ref{eq1} is:
+\[x^{2} - x - 4 = 0\]
+To find the roots of this equation we use the quadratic formula
+\(x=\frac{-b \pm \sqrt{b^2-4 \cdot a \cdot c}}{2 \cdot a} \)
+, which yields
+\(x_1 = 1/2 \cdot (1 - \sqrt{17})\) , \(x_2 = 1/2 \cdot (1 + \sqrt{17}) \)
+
+
+The characteristic equation for equation \ref{eq2} is:
+\[x^{2} - 2 \cdot x - 3 = 0\]
+The roots of this is
+\(x_1 = -1\) , \(x_2 = 3\)
+
+
+The characteristic equation for equation \ref{eq2} is:
+\[x^{2} - 0 \cdot x - 9 = 0\]
+The roots of this is
+\(x_1 = 3\), \(x_2 = -3\)
+
+\subsection*{b}
+Find constanst $s_1$, $s_2$, $s_3$ for each algorithm and show the run time is $\Theta (s_1^2)$ for \ref{eq1}, $\Theta (s_2^2)$ for \ref{eq2}, $\Theta (s_3^2)$  for \ref{eq3}.
+
+The formula for a linear homogeneous relation of degree 2, can be made using its characteristic equations roots.
+In this case all equations have 2 roots, we can therefore insert the roots in \(a_n=u \cdot s_1^n + v \cdot s_2^n\) as $s_1$ and $s_2$ and get an function for the recursion equation.
+
+Formula for \ref{eq1} is:
+\[a_n=u \cdot (1/2 \cdot (1 - \sqrt{17}))^n + v \cdot (1/2 \cdot (1 + \sqrt{17}))^n\]
+
+Because u and v is constants we have that \(u \cdot s_1^n + v \cdot s_2^n = \Theta (s_1^n + s_2^n)\). $s_2$ is bigger than $s_1$ which means that \(\Theta (s_1^n + s_2^n) = \Theta (s_2^n)\) and therefore the runtime is \[\Theta ((1/2 \cdot (1 + \sqrt{17})^n)\]
+
+
+Formula for \ref{eq2} is:
+\[a_n=u \cdot (-1)^n + v \cdot 3^n\]
+The same argument as above applyes here and we get.
+\[u \cdot (-1)^n + v \cdot 3^n = \Theta ((-1)^n + 3^n) = \Theta (3^n)\]
+
+
+Formula for \ref{eq3} is:
+\[a_n=u \cdot (-3)^n + v \cdot 3^n\]
+The same argument as above applyes here and we get.
+\[u \cdot 3^n + v \cdot (-3)^n = \Theta 3^n + (-3)^n) = \Theta (3^n)\]
+
+\subsection*{c}
+The algorithm with the smallest runtime should go in further development and that is equation \ref{eq1}.
+
+
+
+
+\end{document}	
