@@ -1,10 +1,10 @@
 \documentclass[a4paper]{article}
 
-\input{preamble.tex}
+\input{../../preamble.tex}
 \usepackage{amssymb}
 
 \title{DMA 9i}
-\author{HELLO}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Chr. Søderblom}
 
 \begin{document}
 
@@ -17,38 +17,38 @@ We are given 3 linear homogeneous relation of degree 2 describing the run time o
 \begin{equation} \label{eq1} u_{n} = u_{n-1} + 4 \cdot u_{n-2} \end{equation}
 \begin{equation} \label{eq2} u_{n} = 2 \cdot u_{n-1} + 3 \cdot u_{n-2} \end{equation}
 \begin{equation} \label{eq3} u_{n} = 9 \cdot u_{n-2} \end{equation}
-\subsection*{a}
+
+\subsection*{a)}
 For each algoritm we have been asked to find the characteristic equation and its roots.
 
-The characteristic equation for equation \ref{eq1} is:
-\[x^{2} - x - 4 = 0\]
+The characteristic equation for equation \ref{eq1} is
+\(x^{2} - x - 4 = 0\).
 To find the roots of this equation we use the quadratic formula
 \(x=\frac{-b \pm \sqrt{b^2-4 \cdot a \cdot c}}{2 \cdot a} \)
 , which yields
-\(x_1 = 1/2 \cdot (1 - \sqrt{17})\) , \(x_2 = 1/2 \cdot (1 + \sqrt{17}) \)
+\(x_1 = 1/2 \cdot (1 - \sqrt{17})\) , \(x_2 = 1/2 \cdot (1 + \sqrt{17}) \).
 
+The characteristic equation for equation \ref{eq2} is
+\(x^{2} - 2 \cdot x - 3 = 0\).
+The roots of this are
+\(x_1 = -1\) , \(x_2 = 3\).
 
-The characteristic equation for equation \ref{eq2} is:
-\[x^{2} - 2 \cdot x - 3 = 0\]
-The roots of this is
-\(x_1 = -1\) , \(x_2 = 3\)
+The characteristic equation for equation \ref{eq2} is
+\(x^{2} - 0 \cdot x - 9 = 0\).
+The roots of this are
+\(x_1 = 3\), \(x_2 = -3\).
 
+\subsection*{b)}
+The task is to find constants \(s_1\), \(s_2\), \(s_3\) for each algorithm and show the run time is \(\Theta (s_1^2)\) for algorithm \ref{eq1}, \(\Theta (s_2^2)\) for algorithm \ref{eq2}, \(\Theta (s_3^2)\)  for algorithm \ref{eq3}.
 
-The characteristic equation for equation \ref{eq2} is:
-\[x^{2} - 0 \cdot x - 9 = 0\]
-The roots of this is
-\(x_1 = 3\), \(x_2 = -3\)
+The a linear homogeneous recurrence relation of degree 2 can be solved using its characteristic equation's roots.
 
-\subsection*{b}
-Find constanst $s_1$, $s_2$, $s_3$ for each algorithm and show the run time is $\Theta (s_1^2)$ for \ref{eq1}, $\Theta (s_2^2)$ for \ref{eq2}, $\Theta (s_3^2)$  for \ref{eq3}.
-
-The formula for a linear homogeneous relation of degree 2, can be made using its characteristic equations roots.
-In this case all equations have 2 roots, we can therefore insert the roots in \(a_n=u \cdot s_1^n + v \cdot s_2^n\) as $s_1$ and $s_2$ and get an function for the recursion equation.
+In this case all equations have 2 roots, we can therefore insert the roots in \(a_n=u \cdot s_1^n + v \cdot s_2^n\) as \(s_1\) and \(s_2\) and get an function for the recursion equation.
 
 Formula for \ref{eq1} is:
 \[a_n=u \cdot (1/2 \cdot (1 - \sqrt{17}))^n + v \cdot (1/2 \cdot (1 + \sqrt{17}))^n\]
 
-Because u and v is constants we have that \(u \cdot s_1^n + v \cdot s_2^n = \Theta (s_1^n + s_2^n)\). $s_2$ is bigger than $s_1$ which means that \(\Theta (s_1^n + s_2^n) = \Theta (s_2^n)\) and therefore the runtime is \[\Theta ((1/2 \cdot (1 + \sqrt{17})^n)\]
+Because u and v is constants we have that \(u \cdot s_1^n + v \cdot s_2^n = \Theta (s_1^n + s_2^n)\). \(s_2\) is bigger than \(s_1\) which means that \(\Theta (s_1^n + s_2^n) = \Theta (s_2^n)\) and therefore the runtime is \[\Theta ((1/2 \cdot (1 + \sqrt{17})^n)\]
 
 
 Formula for \ref{eq2} is:
@@ -62,13 +62,15 @@ Formula for \ref{eq3} is:
 The same argument as above applyes here and we get.
 \[u \cdot 3^n + v \cdot (-3)^n = \Theta 3^n + (-3)^n) = \Theta (3^n)\]
 
-\subsection*{c}
+\subsection*{c)}
 The algorithm with the smallest runtime should go in further development and that is equation \ref{eq1}.
 
 \section*{Part 2}
 
+\subsection*{a)}
+
 We will prove the statement by induction on k.
-In the base case, \(k=1\), we have to consider two values of n (1 and 2), because $n\leq2^1=2$. When we calculate the statement for $k=1$ we can see that we have to prove that they are both less than or equal to 13:
+In the base case, \(k=1\), we have to consider two values of n (1 and 2), because \(n\leq2^1=2\). When we calculate the statement for \(k=1\) we can see that we have to prove that they are both less than or equal to 13:
 \[
 \begin{aligned}
   a_n & \leq 3 \cdot 1 \cdot 2^1 + 4 \cdot 2^1 - 1\\
@@ -85,10 +87,10 @@ a_1 = 3 \leq 13
   & \leq 13
 \end{aligned}
 \]
-Thus we have that $a_1 \leq 13$ and $a_2 \leq 13$, and the statement is therefore true for the base case.
+Thus we have that \(a_1 \leq 13\) and \(a_2 \leq 13\), and the statement is therefore true for the base case.
 
-Next we have the inductive case, $k=j+1$.
-We assume that $n \leq 2^j \implies a_n \leq 3 \cdot j2^j + 4 \cdot 2^j - 1$, and we must now prove $n \leq 2^{j+1} \implies a_n \leq 3 \cdot (j+1) \cdot 2^{j+1} + 4 \cdot 2^{j+1} - 1$. We have that $a_1 = 3$, so the following is for $n \geq 2$:
+Next we have the inductive case, \(k=j+1\).
+We assume that \(n \leq 2^j \implies a_n \leq 3 \cdot j2^j + 4 \cdot 2^j - 1\), and we must now prove \(n \leq 2^{j+1} \implies a_n \leq 3 \cdot (j+1) \cdot 2^{j+1} + 4 \cdot 2^{j+1} - 1\). We have that \(a_1 = 3\), so the following is for \(n \geq 2\):
 \[
 \begin{aligned}
   a_n & = a_{\floor*{n/2}} + a_{\ceil*{n/2}} + 3n + 1 \\
@@ -102,5 +104,9 @@ We assume that $n \leq 2^j \implies a_n \leq 3 \cdot j2^j + 4 \cdot 2^j - 1$, an
   & = 3 \cdot (j+1) \cdot 2^{j+1} + 4 \cdot 2^{j+1} - 1
 \end{aligned}
 \]
+
+\subsection*{b)}
+
+To see that \(a_n = O(n \log n)\), note that \(n \le 2^{\ceil*{\log_2 n}}\), and thus we have \(a_n \leq 3 \cdot \ceil*{\log_2 n} \cdot 2^{\ceil*{\log_2 n}} + 4 \cdot 2^{\ceil*{\log_2 n}} - 1\). As \(2^{\ceil*{\log_2 n}} = \Theta(n)\) and \(\ceil*{\log_2 n} = \Theta(\log n)\), we have \(3 \cdot \ceil*{\log_2 n} \cdot 2^{\ceil*{\log_2 n}} + 4 \cdot 2^{\ceil*{\log_2 n}} - 1 = \Theta(\log n \cdot n + 2^{\ceil*{\log_2 n}}) = \Theta(n \log n)\).
 
 \end{document}	
