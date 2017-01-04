@@ -1,0 +1,76 @@
+\documentclass[a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+
+\title{Ugeopgave 3 - Chillaxgruppen}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Chr. Søderblom}
+
+\begin{document}
+
+\maketitle
+
+\section{Part 1}
+
+We have been asked to determine which of $n + log_2 n$, $n^2 + 2^n$, $n^2 + n log_10 n$, $n^2 (3 + \sqrt{n})$, $(n + \sqrt{n})^2$ are of some order of magnitude as $n^2$.
+
+\begin{itemize}
+\item $n + log_2 n$ is not the same order of magnitude as $n^2$, because due to rule S2, $log_2 n$ is a smaller order of magnitude than $n$, which by S8 means $n + log_2 n$ has the same order of magnitude as $n$, and by S3 $n^1$ has lower order of magnitude than $n^2$.
+\item $n^2 + 2^n$ has larger order of magnitude than $n^2$, because by rule S5, $n^2$ has a smaller order of magnitude than $2^n$, which by S8 implies that $n^2 + 2^n$ has the same order of magnitude as $2^n$, which we've just established is bigger than $n^2$.
+\item $n^2 + n ~ log_{10} n$ is the same order of magnitude as $n^2$, because by rule S2 $log_{10} n$ is of smaller order of magnitude than $n$, and by rule S7 we can multiply this by $n$, resulting in the conclusion that $n ~ log_{10} n$ is of smaller order of magnitude than $n^2$; this lets us use rule S8 to conclude that $n^2 + n ~ log_{10} n$ has same order of magnitude as $n^2$.
+\item $n^2 (3 + \sqrt{n})$ can be reduced to $3 n^2 + n^{2.5}$. We can apply rule S6 to eliminate the constant $3$ and rule S3 to conclude that $n^2$ has lower order of magnitude than $n^{2.5}$. This lets us apply S8 to conclude that $3 n^2 + n^{2.5}$ has the same order of magnitude as $n^{2.5}$, which we've just concluded has higher order of magnitude than $n^2$.
+\item $(n + \sqrt{n})^2$ can be restated as $n^2 + 2 n^{1.5} + n$. Consider the fragment $2 n^{1.5} + n$. This has order of magnitude $n^{1.5}$, as we can apply rule S6 and S3 to conclude that $n$ has smaller order of magnitude than $n^{1.5}$, and S8 and S6 to conclude that $2 n^{1.5} + n$ is therefore of magnitude $n^{1.5}$. Now we can apply S3 and S8 to conclude that $n^2$ is of larger magnitude than $n^{1.5}$ and that therefore $n^2 + O(n^{1.5})$ has order of magnitude $n^2$.
+\end{itemize}
+
+\noindent To conclude, $n^2 + n ~ log_{10} n$ and $(n + \sqrt{n})^2$ have the same order of magnitude as $n^2$.
+
+\clearpage \section{Part 2}
+
+We have been asked to consider the sequences:
+
+\begin{itemize}
+\item $a_1 = 10$, $a_n = a_{n-1}$
+\item $b_n = \sum\limits_{k=1}^{n}{k^2}$
+\item $c_n = \frac{n^2}{10}$
+\item $d_n = (\frac{3}{2})^n$
+\end{itemize}
+
+\subsection{(a)}
+
+First, we have been asked to compute the first three numbers in each sequence.
+
+$$
+\begin{array}{l|c|c|c}
+n & 1 & 2 & 3\\
+\hline
+a_n & 10 & 10 & 10\\
+\hline
+b_n & 1 & 5 & 14\\
+\hline
+c_n & 0.1 & 0.4 & 0.9\\
+\hline
+d_n & \frac{3}{2} & 2 + \frac{1}{4} & 3 + \frac{3}{8}
+\end{array}
+$$
+
+\subsection{(b)}
+
+Sequence $a$ is the smallest sequence, as it is constant. By rule S5, $d$ is of greater magnitude than both $b$ and $c$. $b_n = \sum\limits_{k=1}^{n}{k^2} = \frac{2 n^3 + 3 n^2 + n}{6}$, which means it is of order of magnitude $n^3$, making it greater than $c$ by rule S3.
+
+This means that the ordering is $a$, $c$, $b$ and $d$, in increasing order of magnitude.
+
+\section{Part 3}
+
+We have been asked to find a closed form for $\sum\limits_{k=0}^{n}{(2k + 1)}$.
+$$
+\begin{aligned}
+\sum\limits_{k=0}^{n}{(2k + 1)} &= \sum\limits_{k=0}^{n}{1} + \sum\limits_{k=0}^{n}{2k}\\
+&= 1 + n + \sum\limits_{k=0}^{n}{2k} \\
+&= 1 + n + 2 \sum\limits_{k=0}^{n}{k} \\
+&= 1 + n + 2 \frac{n^2 + n}{2} \\
+&= 1 + n + n^2 + n \\
+&= n^2 + 2n + 1\\
+\end{aligned}
+$$
+
+\end{document}

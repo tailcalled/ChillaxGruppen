@@ -1,0 +1,137 @@
+\documentclass[a4paper]{article}
+
+\input{../../preamble.tex}
+
+\title{DMA 7g}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Chr. Søderblom}
+
+\begin{document}
+
+\maketitle
+
+\section*{Part 1}
+
+\subsection*{(1)}
+
+We have been tasked with writing a pseudocode implementation of union-find where an array \code|A| is kept with the property that \code|A[i]| is the representative for \code|i|.
+
+Our implementation of the initialization algorithm is the following:
+
+\begin{Code}
+A = []
+init(n)
+    A = new Array(n)
+    for i = 0 to n - 1
+    	A[i] = i
+\end{Code}
+
+To execute \code|find|, we simply look up in the array:
+
+\begin{Code}
+find(n)
+    return A[n]
+\end{Code}
+
+With \code|union|, we have to iterate through the entire array to change the relevant fields:
+
+\begin{Code}
+union(i, j)
+	if find(i) == find(j)
+		return
+	repI = find(i)
+	repJ = find(j)
+	for k = 0 to A.Length - 1
+		if A[k] == repJ
+			A[k] = repI
+\end{Code}
+
+\subsection*{(2)}
+
+We have been tasked with manually computing a sequence of operations with our union-find. Here is our results:
+
+\begin{Code}
+	A = []
+init(7)
+	A = [0, 1, 2, 3, 4, 5, 6]
+union(3, 4)
+	A = [0, 1, 2, 3, 3, 5, 6]
+union(5, 0)
+	A = [5, 1, 2, 3, 3, 5, 6]
+union(4, 5)
+	A = [3, 1, 2, 3, 3, 3, 6]
+union(4, 3)
+	A = [3, 1, 2, 3, 3, 3, 6]
+union(0, 1)
+	A = [3, 3, 2, 3, 3, 3, 6]
+union(2, 6)
+	A = [3, 3, 2, 3, 3, 3, 2]
+union(0, 4)
+	A = [3, 3, 2, 3, 3, 3, 2]
+union(6, 0)
+	A = [2, 2, 2, 2, 2, 2, 2]
+\end{Code}
+
+\subsection*{(3)}
+
+Our implementation maintains a stricter invariant on the union-find array than the fast implementation in the notes does. The notes require that if you follow the path \code|i -> A[i] -> A[A[i]] -> ...|, you eventually end up at the element that represents the set. However, our implementation requires that this path has at most length \code|1|, so that \code|A[i]| represents the set containing \code|i|.
+
+Maintaining this invariant sometimes requires extra work, as we always have to iterate through the entire array when \code|union|ing. This means that our \code|union| implementation always runs in \(O(n)\) time, whereas the notes only do this in a few pathological cases.
+
+\section*{Part 2}
+
+\subsection*{(1)}
+
+We have been asked to prove the following sentence:
+
+\begin{theorem} \label{union-rank} Let \(t\) be a tree constructed by \code|union|ing two trees \(t_1\) and \(t_2\) using the union-by-rank heuristic. If \(rank(t_1) \ne rank(t_2)\) then \(rank(t) \le max(rank(t_1), rank(t_2))\). If \(rank(t_1) = rank(t_2)\) then \(rank(t) = 1 + rank(t_1)\).\end{theorem}
+
+\begin{proof} We will consider three cases: \(rank(t_1) > rank(t_2)\), \(rank(t_1) < rank(t_2)\) and \(rank(t_1) = rank(t_2)\). In the first case, the root of \(t_2\) is assigned as a child to the root of \(t_1\), and the rank of the root of \(t_1\) is not changed. This means that the root of \(t\) is the root of \(t_1\), and so \(rank(t) = rank(t_1) = max(rank(t_1), rank(t_2))\). A similar argument applies for case two. Therefore, if \(rank(t_1) \ne rank(t_2)\), we have that \(rank(t) \le max(rank(t_1), rank(t_2))\). In case three, the root of \(t_1\) is assigned as a child to the root of \(t_2\). This means that the root of \(t\) is the same as the root of \(t_2\). Then, the rank of the root of \(t\) is incremented. This means that \(rank(t) = 1+rank(t_1)\).\end{proof}
+
+\subsection*{(2)}
+
+We have been asked to fill out the missing parts of a proof.
+
+The first missing part is proving the base case of a proof by strong induction. The proposition \(P(n)\) that is being proven inductive is that trees of size \(n\) have a \(rank\) of at most \(\log_2(n)\).
+
+\begin{lemma} \label{base-case} \(P(1)\) holds. \end{lemma}
+
+We use the implementation in CLRS page 571. We have disproven the above lemma with the following counterexample:
+
+\begin{proof} First, use the \code|Make-Set| algorithm to create a one-element set \code|x|. Then do \code|Union(x, x)|, which increases its rank to \code|1|. That is, we now have \(rank(x) = 1 \ge 0 = \log_2 size(x)\), contradicting \ref{base-case} \end{proof}
+
+To avoid this, we propose changing the \code|Union| algorithm to the following:
+
+\begin{Code}
+Union(x, y):
+    found-x = find(x)
+    found-y = find(y)
+    if found-x != found-y
+        Link(found-x, found-y)
+\end{Code}
+
+From now on, we will assume that \code|Union| does not increase the rank when called as \code|Union(x, x)|, with a correction along the lines of the listing above. We will now prove that in this case, \(P(1)\) holds.
+
+\begin{proof}
+Consider the last operation applied to the tree \(t\) of size \(1\). We can without loss of generality assume that this is not \code|Union(t, t)|, since this has no effect. It cannot be the union of two other trees, because then it would have a size greater than \(1\). Therefore, it must be newly constructed using \code|Make-Set|. But \code|Make-Set| assigns a rank of \(0 = log_2 1\), and therefore the property holds.
+\end{proof}
+
+Next, we need to prove a part of the induction step. 
+
+\begin{lemma} A tree \(t\) with \(n\) nodes that has been constructed by a union of two trees \(t_1\) and \(t_2\) of size \(i\) and \(j\) respectively where \(rank(t_1) \ne rank(t_2)\) has \(rank(t) \le \log_2 n\). \end{lemma}
+
+\begin{proof} In theorem \ref{union-rank} we proved that that \(rank(t) \le max(rank(t_1), rank(t_2))\). Observe that \(rank(t_1) \le \log_2 i \le \log_2 n\), and similarly \(rank(t_2) \le \log_2 j \le \log_2 n\). From that we see that \(max(rank(t_1), rank(t_2)) \le \log_2 n\), which means that \(rank(t) \le \log_2 n\). \end{proof}
+
+\subsection*{(3)}
+
+Next we need to prove the following theorem:
+
+\begin{theorem}
+The height of a tree \(t\) constructed with union-by-rank is less than or equal to \(\log_2 size(t)\).
+\end{theorem}
+
+\begin{proof}
+The union-by-rank algorithm has been implemented so it maintains the invariant that \(height(t) \le rank(t)\), and we already know that \(rank(t) \le \log_2 size(t)\), which must imply that \(height(t) \le \log_2 size(t)\).
+\end{proof}
+
+
+\end{document}

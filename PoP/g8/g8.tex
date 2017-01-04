@@ -1,0 +1,156 @@
+\documentclass[a4paper]{article}
+
+\input{../../preamble.tex}
+
+\title{PoP 8g - Mastermind}
+\author{Carl Dybdahl, Emil Chr. Søderblom, Patrick Hartvigsen}
+
+\begin{document}
+
+\maketitle
+
+\section{Preface}
+
+\noindent We have been tasked with writing a Mastermind program in \Fsh, and have been given a series of requirements. The requirements include various items, including which types the program should use, that it should have the option of both AI and human players, and that it should be properly documented and tested. We have made sure to fulfill all of the requirements, and in addition have implemented various optional things, including a relatively good AI.
+
+\clearpage
+
+\section{Problem Analysis}
+
+We had been given the following requirements:
+
+\begin{itemize}
+\item The program must be an implementation of the game Mastermind.
+\item Both user vs user, AI vs AI, and user vs AI must be available. In the last case, the user must be allowed to pick whether they have to choose the code or guess the code.
+\item The program must implement the folllowing structure:
+\begin{Code}
+type codeColor =
+  Red | Green | Yellow | Purple | White | Black
+type code = codeColor list
+type answer = int * int
+type board = (code * answer) list
+type player = Human | Computer
+// let the given player type choose a task for their opponent
+makeCode : player -> code
+// let the given player type make a guess based on game history
+guess : player -> board -> code
+// compute the answer given a guess and the correct code
+validate : code -> code -> answer
+\end{Code}
+\item It must be possible to play this program in the console, rather than with a GUI.
+\item The program must be tested and documented according to the \Fsh standard.
+\item The solution must be documented with a detailed report at most 20 pages long written in \LaTeX.
+\end{itemize}
+
+\section{Architecture and Design}
+
+We have decided to make this program as functional (in the sense of the programming paradigm) as possible. We can't make it entirely functional, as we have to do IO, but we have avoided loops with mutable variables and have separated the IO from the business logic in various cases.
+
+We could've written some imperative portions, but this has the disadvantage that \Fsh is not a primarily imperative language and therefore lack constructs such as \code|break|. For example, the main loop of the program is the following tail recursive function:
+
+\codeInput[mainLoop]{8g.fsx}
+
+This is written as a tail recursive function. If we wanted to write it iteratively, we'd need a \code|break| construct or an additional local variable to end the loop when the guess is correct.
+
+A lot of our architecture has been decided in the requirements, that describe various functions we should implement and types we should use. What remains after that is essentially how we wire up the code to form a program.
+
+\sloppy Initially in the code file, we have a binding that contains a list of all \code|code|s, named \code|makeCodes|. Next, we have some functions which handle user input, namely \code|charListToCode|, \code|checkStringCode|, \code|getUserInput|, \code|playerFormat| and \code|codeFormat|. The rest of the file contains the business logic:
+
+The function \code|makeCode|, which is right after the previously mentioned bindings, is one of the functions we were required to implement. It handles generating a \code|code| that must be guessed. Then comes \code|validate|, another function mentioned in the requirements, which computes the answer that the player sees when they have made a guess. Next, we have three functions \code|guessQuality|, \code|guessBot| and \code|guess| which together implement the logic for letting the user or AI guess the code.
+
+Last, we have \code|gameInit|, \code|gameStart| and \code|main|, which tie the functions together into a full game.
+
+\section{Program and Algorithms}
+
+\subsection{Codes}
+
+The total number of different possible secret codes is \(6^4 = 1296\), which is sufficiently small that we can keep a list of all the possible codes and easily iterate through it. We exploit this in a number of ways. For example, to generate a random code, we simply pick a random index in our table of codes. It is an important observation that the number of codes is tractably small, because the AI algorithm uses this heavily.
+
+\subsection{User Input}
+
+In order to read user input, we have defined a function \code|getUserInput| which separates the reading loop from the validation of user input. It takes a parameter \code|format : string -> 'a option| which it uses to determine whether a given line of input is valid: if the function returns \code|Some x|, the input is valid, otherwise \code|getUserInput| queries the user again.
+
+The \code|format| parameter combines validation and parsing: it can return a value of an arbitrary type, which is the value that \code|getUserInput| will return. 
+
+\subsection{AI Algorithm} \label{sec:AI Algorithm}
+
+The first step in the AI is to figure out what codes are potentially the correct ones, based on the current state of the board. It does so by taking all possible codes and filtering so that it gets a list of only the codes that match the answers we have seen so far.
+
+From this list, it tries to pick the code that, once it sees the answer for the code, gives as much information about the correct code as possible.
+
+To do this, we need to define how much information a guess yields. Let \(S\) be the set of code that, given the current state of the board, could potentially be the secret code. Observe that a guess \(g\) partitions the set \(S\) into set of codes that cannot be distinguished based on the answers that the guess could potentially yield. That is, two codes \(a, b \in S\) are in the same petition if the answer that you get when you guess \(g\) is the same regardless of whether \(a\) or \(b\) is the true secret code.
+
+Let \(P_g(S)\) be the set of partitions that \(g\) yields. A guess that yields optimal information would make all the partitions the same size. However, this is not always possible. For this reason, we need to define a qualitative measure of how much information a guess yields. We have decided that the information \(I(g)\) is defined by:
+
+\[I(g) = \sum_{s \in P_g(S)}{\log (\varepsilon + |s|)}\]
+
+\noindent for some \(\varepsilon\). (We used \(\varepsilon = 1.0\), but according to our tests the exact value made very little difference.) The reasoning behind this is that maximizing the sum of a sublinear function of the set sizes will encourage the AI to make the sets approximately equally big. The epsilon is used to avoid having infinities break things when the size of the partitions is zero.
+
+\subsection{Validation Algorithm}
+
+The validation algorithm must, given two codes \code|c| and \code|g|, find the number of white and black pins when one guesses \code|g| while \code|c| is the correct code.
+
+The number of white pins is defined to be the number of correct colors in the code that are not placed in the correct spot, whereas the number of black pins is defined to be the number of correct colors in the code that are placed in the correct spot.
+
+Computing the number of black pins is trivial: we simply count the number of spots where the two colors match.
+
+It is more complex to compute the number of white pins. To do this, we actually compute the sum of the number of black and the number of white pins, and then subtract the number of black pins.
+
+The sum of the numbers of pins is simply the number of correct colors, regardless of whether they are in the correct spot or not. We find this number by considering each color and counting its number of occurences in \code|c| and \code|g|. Each occurence in \code|c| that is matched by an occurence in \code|g| is a correct color, so we simply take the minimum of the two numbers of occurences. By summing over these minimums, we find the total number of pins.
+
+\section{User Guide}
+
+When you start the program, you will be prompted for what kind of game you want to play. Write \code|1| if you wish to guess the code made by the computer, \code|2| if you wish to play against another human, \code|3| if you wish to have the computer try to guess your code and \code|4| if you wish to test the computer against itself.
+
+If you chose mode \code|2| or \code|3|, you will be queried for the code that must be guessed. The code must be 4 letters long and consists of only the characters \code|rgypwb|, standing for red, green, yellow, purple, white and black. Once you've entered the code, the guessing will begin.
+
+In mode \code|1| and \code|2|, you will be repeatedly queried for input guesses. At each query, you will be shown the board of previous guesses. This is rendered as a list of codes and answers, where each answer is the number of white and black pins respectively.
+
+You have 30 turns to guess the hidden code. If you don't manage to guess it in this time, you lose the game.
+
+\section{Testing}
+
+We have both tested the main functions \code|makeCode|, \code|guess| and \code|validate| separately and tested the full program. These tests can be found in the \code|8gTest.fsx|. In order to test the user input, we made a test hook named \code|readUserLine| which we could override to programmatically control the input in our tests.
+
+The tests for \code|makeCode|, \code|guess| and \code|validate| were all successful. In the part of \code|makeCode| and \code|guess| where the player type was \code|Human|, the function converted the input string from the user to a parsed value of type \code|code| correctly. When player type was \code|Computer|, it returned a \code|code| correctly. \code|makeCode| returned a random code and \code|guess| returned a guess on a possible code.
+
+When the program asks for user input the code checks if the input is valid. We tried to giving it wrong inputs to see if it would handle them correctly and it did.
+
+The test of the full program were done by calculating the average number of turns it took \code|Computer| to guess a code. We also tested for worst and best case number of turns. We expected \code|Computer| to do about as well as other algorithms, such as Donald Knuths algorithm that uses 4.340 guesses on average.
+
+We tried varying the epsilon defined in section \ref{sec:AI Algorithm}. As can be seen on the following table, this had little effect:
+
+\begin{tabular}{ l | l }
+AI & average number  of guesses \\
+\hline
+\(\varepsilon = 0.01\) & 4.458 \\
+\(\varepsilon = 0.1\) & 4.457 \\
+\(\varepsilon = 1.0\) & 4.455 \\
+\(\varepsilon = 2.0\) & 4.455 \\
+\(\varepsilon = 5.0\) & 4.456 \\
+\(\varepsilon = 10.0\) & 4.458 \\
+no AI & 5.021
+\end{tabular}
+
+In this table we also included a test without any AI, where the code simply picks the first code that is compatible with all previous guesses. While \(\varepsilon\) had little effect, we chose \(\varepsilon = 1.0\) because it did slightly better than the alternatives. This lets it guess the correct code in 4.455 guesses on average, which is reasonably close to 4.340.
+\section{Conclusion}
+
+We have written a Mastermind game in \Fsh using various algorithms that we have documented in this report. The game works as we want it to, and our AI can on average guess a secret code in \(4.455\) guesses.
+
+\clearpage
+
+\section{Appendix}
+
+\subsection{Code}
+
+\codeInput{8g.fsx}
+
+\subsection{Test Code}
+
+\codeInput{8gTests.fsx}
+
+\subsection{Test Results}
+
+\codeInput{8gTestResult.txt}
+
+\end{document}	

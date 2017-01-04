@@ -1,0 +1,29 @@
+User Writes: "rbgp" as input
+Choose color code with length of 4 with: r=Red, g=Green, y=Yellow, p=Purple, w=White, b=Black.
+> [ OK ] makeCode Human "rbgp" = [Red; Black; Green; Purple]
+User Writes: "yyww" as input
+Choose color code with length of 4 with: r=Red, g=Green, y=Yellow, p=Purple, w=White, b=Black.
+> [ OK ] makeCode Human "yyww" = [Yellow; Yellow; White; White]
+
+makeCode Computer, makes Random output(code): [Red; Purple; Red; Yellow]
+makeCode Computer, makes Random output(code): [Purple; Yellow; Green; Purple]
+
+
+User Writes: "rbgp" as input
+Previous guesses: []
+Try a guess on the color code: r=Red, g=Green, y=Yellow, p=Purple, w=White, b=Black.
+> [ OK ] makeCode "rbgp" = [Red; Black; Green; Purple]
+User Writes: "yyww" as input
+Previous guesses: [([Red; Red; Red; Red], (1, 1))]
+Try a guess on the color code: r=Red, g=Green, y=Yellow, p=Purple, w=White, b=Black.
+> [ OK ] makeCode "yyww" = [Yellow; Yellow; White; White]
+
+guess Computer, gives a possible guess: [Red; Red; Green; Green]
+guess Computer, gives a possible guess: [Black; Black; White; Purple]
+
+
+[ OK ] validate [Red; Red; Red; Red] [Red; Red; Red; Red] = (0, 4)
+[ OK ] validate [Black; Red; Purple; Green] [Red; Black; Red; Red] = (2, 0)
+[ OK ] validate [Black; Red; Purple; Green] [Red; Black; Purple; Green] = (2, 2)
+
+

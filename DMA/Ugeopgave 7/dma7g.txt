@@ -1,0 +1,39 @@
+
+A = []
+init(n)
+    A = new Array(n)
+    for i = 0 to n - 1 do
+    	A[i] = i
+
+find(n)
+    return A[n]
+
+union(i ,j)
+	if find(i) == find(j)
+		return
+	repI = find(i)
+	repJ = find(j)
+	for k = 0 to A.Length - 1
+		if A[k] == repJ
+			A[k] = repI
+
+	A = []
+init(7)
+	A = [0, 1, 2, 3, 4, 5, 6]
+union(3, 4)
+	A = [0, 1, 2, 3, 3, 5, 6]
+union(5, 0)
+	A = [5, 1, 2, 3, 3, 5, 6]
+union(4, 5)
+	A = [3, 1, 2, 3, 3, 3, 6]
+union(4, 3)
+	A = [3, 1, 2, 3, 3, 3, 6]
+union(0, 1)
+	A = [3, 3, 2, 3, 3, 3, 6]
+union(2, 6)
+	A = [3, 3, 2, 3, 3, 3, 2]
+union(0, 4)
+	A = [3, 3, 2, 3, 3, 3, 2]
+union(6, 0)
+	A = [2, 2, 2, 2, 2, 2, 2]
+

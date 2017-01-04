@@ -1,0 +1,95 @@
+\documentclass[a4paper]{article}
+
+\input{../../preamble.tex}
+
+\title{DMA Week Task 5}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Søderblom}
+
+\begin{document}
+
+\maketitle
+
+\section{Part 1}
+
+\subsection{(1)}
+
+\[
+\begin{aligned}
+GCD(8, 5) &= GCD(5, 8 \mmod 5) \\ &= GCD(5, 3) \\ &= GCD(3, 5 \mmod 3) \\ &= GCD(3, 2) \\ &= GCD(2, 3 \mmod 2) \\ &= GCD(2, 1)
+\end{aligned}
+\]
+
+Therefore the missing number at $(8, 5)$ is $4$.
+
+\[
+GCD(13, 8) = GCD(8, 13 \mmod 8) = GCD(8, 5).
+\]
+
+The rest follows in the calculation we did for $GCD(8, 5)$. Therefore the missing number at $(8, 5)$ is $5$.
+
+\subsection{(2)}
+
+\begin{tabular}{c c c c c c c c c c c c c c c}
+$t_1$ & $t_2$ & $t_3$ & $t_4$ & $t_5$ & $t_6$ & $t_7$ & $t_8$ & $t_9$ & $t_{10}$ & $t_{11}$ & $t_{12}$ & $t_{13}$ & $t_{14}$ & $t_{15}$ \\
+$1$ & $1$ & $2$ & $2$ & $3$ & $3$ & $3$ & $4$ & $4$ & $4$ & $4$ & $4$ & $5$ & $5$ & $5$
+\end{tabular}
+
+\subsection{(3)}
+
+At each recursion step, the sum of the arguments becomes smaller. This means that they become at least one smaller (because they’re integers), which means that the maximum number of recursive steps at most can be the sum of the arguments. Since they’re both at most as big as $n$, their sum can at most be $2n = O(n)$.
+
+\subsection{(4)}
+
+As a counterexample, we will find a pair of sequences $a_n$ and $b_n$ such that the number of operations for $GCD(a_n, b_n)$ grows by one each time $n$ is incremented, which means that the runtime of GCD is unbounded and therefore not $O(1)$. We do this by choosing the sequence such that each recursion step in $GCD$ leads back to the previous entry in the sequence.
+We will start the sequence at $a_0 = 3$, $b_0 = 2$. We maintain the invariant that $a_n > b_n$.
+At each recursion step, we have $GCD(a, b) = GCD(b, a \mmod b)$. This means that $b_{n+1} = a_n$. It also means that we must have that $a_{n+1} \mmod b_{n+1} = b_n$, which we achieve by having $a_{n+1} = a_n+b_n$.
+
+\subsection{(5)}
+
+No, it looks logarithmic.
+
+\section{Part 2}
+
+\subsection{(1)}
+
+\[ P(n) = [(6^n - 5n + 4) \mmod 5 = 0] \]
+
+\subsection{(2)}
+
+\[ P(1) \iff [(6 - 5 + 4) \mmod 5 = 0] \iff [5 \mmod 5 = 0] \iff [True] \]
+\[ P(2) \iff [(36 - 10 + 4) \mmod 5 = 0] \iff [30 \mmod 5 = 0] \iff [True] \]
+\[ P(3) \iff [(216 - 15 + 4) \mmod 5 = 0] \iff [205 \mmod 5 = 0] \iff [True] \]
+\[ P(4) \iff [(1296 - 20 + 4) \mmod 5 = 0] \iff [1280 \mmod 5 = 0] \iff [True] \]
+\[ P(5) \iff [(7776 - 25 + 4) \mmod 5 = 0] \iff [7755 \mmod 5 = 0] \iff [True] \]
+
+\subsection{(3)}
+
+Consider the sequence $b_n = 6^n - 5n + 4$. We can compute this recursively, using:
+
+\[
+\begin{aligned}
+b_{n+1} &= 6^{n+1} - 5(n+1) + 4 \\
+&= 6\cdot6^{n} - 5n - 5 + 4 \\
+&= 5\cdot6^{n} - 5 + 6^{n} - 5n + 4 \\
+&= 5\cdot6^{n} - 5 + b_n
+\end{aligned}
+\]
+
+\subsection{(4)}
+
+\[
+\begin{aligned}
+P(n+1) &\iff [6^{n+1} - 5(n+1) + 4 \mmod 5 = 0] \\
+&\iff [b_{n+1} \mmod 5 = 0] \\
+&\iff [5\cdot6^{n} - 5 +  b_n \mmod 5 = 0] \\
+&\iff [b_n \mmod 5 = 0] \\
+&\iff [(6^n - 5n + 4) \mmod 5 = 0] \\
+&\iff P(n)
+\end{aligned}
+\]
+
+\subsection{(5)}
+
+In (2), we concluded that $P(1)$, and in (4), we concluded that $P(n) \implies P(n+1)$. By induction, this means that $P(n)$ is true for all $n \ge 1$.
+
+\end{document}	

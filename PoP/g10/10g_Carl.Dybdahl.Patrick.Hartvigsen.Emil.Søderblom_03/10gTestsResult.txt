@@ -1,0 +1,10 @@
+
+Testing PassDay...
+[ OK ] Speed was 5 with 1 food as expected
+[ OK ] Speed was 10 with 2 food as expected
+[ OK ] Speed was 15 with 3 food as expected
+[ OK ] Speed was 20 with 4 food as expected
+
+Testing decideFoodNeeded...
+[ OK ] Carnivore's DecideFoodNeeded worked as intented
+[ OK ] Herbivore's DecideFoodNeeded worked as intented

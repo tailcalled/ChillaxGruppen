@@ -1,0 +1,93 @@
+\documentclass[a4paper]{article}
+
+\input{../../preamble.tex}
+
+\title{DMA Ugeopgave 4}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Søderblom}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Del 1}
+
+\subsection{a)}
+
+Et objekt i listen \code|S| skal indeholde 3 attributter, \code|pre|, \code|key|, og \code|next|. \code|pre| skal pege på den tidligere knude, hvor \code|next| skal pege på den næste knude, og \code|key| skal være elementet ved knudens position. Hvis det er det første objekt i listen skal \code|pre = NIL| og hvis det er det sidste skal \code|next = NIL|.
+
+Pseudokode:
+
+\begin{Code}
+def singleton(z):
+	return new [ prev = NIL; next = NIL; key = z ]
+\end{Code}
+
+\subsection{b)}
+
+\begin{Code}
+def F(S, z):
+	var prev = NIL
+	var target = S
+	while (target != NIL && target.key < z):
+		prev = target
+		target = target.next
+	var node = singleton(z)
+	if (target == NIL):
+		prev.next = node
+		node.prev = prev
+	else:
+		if (target.prev != NIL):
+			target.prev.next = node
+			node.prev = target.prev
+		target.prev = node
+		node.next = target
+\end{Code}
+
+\subsection{c)}
+
+Hvis \code|z| skal placeres sidst i listen er funktionen nødt til at iterere gennem hele listen. Dette tager $\Theta(n)$ tid.
+
+\subsection{d)}
+
+Worst-case tilfældet er, at vi ved hver indsættelse skal iterere gennem hele listen - hvis dette er nødvendigt kommer vi til at bruge $\Theta(n^2)$, da vi $n$ gange skal iterere gennem en liste med gennemsnitlig størrelse $n/2$. Dette sker hvis vi hver gang skal indsætte et element der er større end alle de andre, altså hvis vi indsætte elementerne i sorteret rækkefølge.
+
+I visse tilfælde, for eksempel hvis elementerne bliver indsat i omvendt sorteret rækkefølge, kan vi gøre det hurtigere end $\Theta(n^2)$, men det kan ikke blive langsommere. Dermed er kørselstiden $O(n^2)$ på sortering af lister med denne metode.
+
+\section{Del 2}
+
+\subsection{a)}
+
+Vi laver en liste \code|B| og en løkke der kører gennem hver underliste $l_i$ i \code|S|. Denne løkke itererer $k$ gange, og hver gang indsætter vi i \code|B| en knude med en pejer på det tilsvarende element i \code|S|. Efter vi har indsat knuden gennemløber vi en anden løkke $k$ gange, hvor vi bevæger os frem til næste underliste.
+
+\subsection{b)}
+
+Da \code|B| har en længde på $\sqrt{n}$ vil det tage $\Theta(\sqrt{n})$.
+
+\subsection{c)}
+
+\begin{Code}
+def G (S,B,x): 
+	var prev = NIL
+	var target = B
+	while (target != NIL && target.pa.key < z)):
+		prev = target
+		target = target.next
+	if (target == NIL):
+		F(prev.pa, x)
+	elseif (prev == NIL):
+		var node = new [
+			prev = NIL,
+			next = target.pa,
+			key = x
+		]
+		target.pa.prev = node
+	else
+		F(prev.pa, x)
+\end{Code}
+
+\subsection{d)}
+
+Hvis en sorteret indsættelse kan gøres på $O(\sqrt{n})$ tid, kan man bare indsætte hvert element der skal sorteres, hvilket giver en samlet kørselstid på $O(n \sqrt{n})$. Dog skal man sørge for intelligent at vedligeholde \code|B|-listen, for ellers kan man ikke gentagende gange indsætte på $O(\sqrt{n})$ tid. 
+
+\end{document}

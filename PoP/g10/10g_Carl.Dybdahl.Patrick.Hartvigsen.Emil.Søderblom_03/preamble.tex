@@ -1,0 +1,29 @@
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{xspace}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+
+\newcommand{\Fsh}{{F$\sharp$}\xspace}
+
+\newcommand{\col}[2]{{\begin{pmatrix} #1 \\ #2 \end{pmatrix}}}
+\newcommand{\mmod}{\text{ mod }}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+
+
+\lstset{basicstyle=\small\ttfamily,frame=leftline,numbers=left,xleftmargin=0.7cm,basewidth=0.14cm}
+\lstset{rangeprefix=(*, rangesuffix=*),includerangemarker=false}
+
+\lstnewenvironment{Code}{}{}
+\newcommand{\codeInput}[2][]{\ifthenelse{\equal{#1}{}}{\lstinputlisting[title=#2]{#2}}{\lstinputlisting[linerange=#1-end,title=#2\ -\ #1]{#2}}}
+\newcommand{\code}{\lstinline}

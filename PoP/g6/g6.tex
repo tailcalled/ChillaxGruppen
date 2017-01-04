@@ -1,0 +1,50 @@
+\documentclass[a4paper]{article}
+
+\input{../../preamble.tex}
+
+\title{PoP g6}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Søderblom}
+
+\begin{document}
+
+\maketitle
+
+\section{Task g6.1}
+
+We have written a function \code|numberToDay : int -> weekday option| which converts the numbers \code|1| through \code|7| to the weekdays \code|Some Monday| through \code|Some Sunday|, returning \code|None| if the integer is not in the interval.
+
+\codeInput{g6-1.fsx}
+
+\noindent We have chosen the most direct approach possible, where we just enumerate input-output pairs in a \code|match| construct in the function.
+
+\section{Task g6.2}
+
+We were tasked with making a figure \code|g61| consisting of two copies of a different figure \code|o61|, which consists of a red rectangle and a blue circle.
+
+\codeInput{g6-2.fsx}
+
+\section{Task g6.3}
+
+We have extended the function \code|colourAt : point -> figure -> colour| to deal with the extension of \code|figure| with the constructor \code|Twice|.
+
+\codeInput{g6-3.fsx}
+
+\noindent \code|Twice (f, (dx, dy))| has the denotation of consisting of two copies of the figure \code|f|, with the copy on top being translated by \code|(dx, dy)|. To find the colour at \code|(x, y)| of \code|Twice (f, (dx, dy))|, we consider the colour of the lower and the upper copy at this position. The lower copy has the same colours as \code|f|, so this can be examined simply with \code|colourAt (x, y) f|. Because the upper copy is translated, we must translate the points we query by \code|(-dx, -dy)| to find the colours of them.
+
+The existence of the constructor \code|Twice| means that we use exponential time in the worst case to find the colour at a position in a figure, since one can nest them arbitrarily deeply and each layer of nestings doubles the amount of calls to \code|colourAt|.
+
+\section{Task g6.4}
+
+In order to draw \code|figure|s, we need to add a background color. We use gray for this.
+
+\codeInput{g6-4.fsx}
+
+\section{Task g6.5}
+
+In order to extend \code|checkFigure| with a case for \code|Twice|, we note that the position of figures does not matter for whether a figure is correct. This means that we can check the translated version that \code|Twice| creates simply by checking the untranslated version.
+
+\codeInput{g6-5.fsx}
+
+\noindent To compute the \code|boundingBox| of \code|Twice|, we use a method similar to \code|Mix|, but we don't need to recurse twice, as we can simply translate the bounding box manually. This would not work if the edges of figures could lie "between" the grid lines, as they can in Nut of the Week.
+
+\end{document}	
