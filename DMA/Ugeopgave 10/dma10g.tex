@@ -65,7 +65,42 @@ The same argument as above applyes here and we get.
 \subsection*{c}
 The algorithm with the smallest runtime should go in further development and that is equation \ref{eq1}.
 
+\section*{Part 2}
 
+We will prove the statement by induction on k.
+In the base case, \(k=1\), we have to consider two values of n (1 and 2), because $n\leq2^1=2$. When we calculate the statement for $k=1$ we can see that we have to prove that they are both less than or equal to 13:
+\[
+\begin{aligned}
+  a_n & \leq 3 \cdot 1 \cdot 2^1 + 4 \cdot 2^1 - 1\\
+  & = 13
+\end{aligned}
+\]
+We can see that they are both less than or equal to 13:
+\[
+a_1 = 3 \leq 13
+\]\[
+\begin{aligned}
+  a_2 & = a_1 + a_1 + 3 \cdot 2 + 1 \\
+  & = 3 + 3 + 6 + 1 \\
+  & \leq 13
+\end{aligned}
+\]
+Thus we have that $a_1 \leq 13$ and $a_2 \leq 13$, and the statement is therefore true for the base case.
 
+Next we have the inductive case, $k=j+1$.
+We assume that $n \leq 2^j \implies a_n \leq 3 \cdot j2^j + 4 \cdot 2^j - 1$, and we must now prove $n \leq 2^{j+1} \implies a_n \leq 3 \cdot (j+1) \cdot 2^{j+1} + 4 \cdot 2^{j+1} - 1$. We have that $a_1 = 3$, so the following is for $n \geq 2$:
+\[
+\begin{aligned}
+  a_n & = a_{\floor*{n/2}} + a_{\ceil*{n/2}} + 3n + 1 \\
+  & \leq 3 \cdot j \cdot 2^j + 4 \cdot 2^j - 1 + a_{\ceil*{n/2}} + 3n + 1 \\
+  & \leq 3 \cdot j \cdot 2^j + 4 \cdot 2^j - 1 + 3 \cdot j \cdot 2^j + 4 \cdot 2^j - 1 + 3n + 1 \\
+  & = 2(3 \cdot j \cdot 2^j + 4 \cdot 2^j - 1) + 3n + 1 \\
+  & = 6 \cdot j \cdot 2^j + 8 \cdot 2^j - 2 + 3n + 1 \\
+  & = 6 \cdot j \cdot 2^j + 8 \cdot 2^j + 3n - 1 \\
+  & = 3 \cdot j \cdot 2^{j+1} + 4 \cdot 2^{j+1} + 3n - 1 \\
+  & \leq 3 \cdot j \cdot 2^{j+1} + 4 \cdot 2^{j+1} + 3 \cdot 2^{j+1} - 1 \\
+  & = 3 \cdot (j+1) \cdot 2^{j+1} + 4 \cdot 2^{j+1} - 1
+\end{aligned}
+\]
 
 \end{document}	
