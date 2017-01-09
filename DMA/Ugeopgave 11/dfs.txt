@@ -1,19 +1,20 @@
 DFS(G)
-	for each vertex u \in G.V
+	for each vertex u in G.V
 		u.Color = white
-		u.Pi = NIL
-	S = ø
-	for each vertex u \in G.V
-		if u.Color = white
-			u.Color = grey
-			push (S,u)
-		while S != ø do
-			u = pop (S)
-			for each v \in adj(u)
-				if v.Color = white then
-					v.Color = grey
-					v.Pi = u
-					push(S,v)
-			u.Color = black
+		u.Pi = Nil
+	clear (S)
+	for each vertex u in G.V
+		push (S,(u, Nil))
+		while not empty(S) do
+			u, v = pop (S)
+			DFS-visit(u, v)
+
+DFS-visit(u, p)
+	if u.Color = white
+		u.Color = grey
+		u.Pi = p
+		for each v in adj(u)
+			push(S,(v, u))
+		u.Color = black
 		
 

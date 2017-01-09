@@ -10,8 +10,90 @@
 
 \maketitle
 
+\section*{1.}
+
 We have been asked to write pseudocode that implements depth-first search using a stack instead of recursion. This is our implementation:
 
 \codeInput{dfs.txt}
+
+\section*{2.}
+
+By using a stack, our algorithm avoids recursion. Each element of the stack consists of a pair, \code|(u, v)|, where \code|u| is a visited node and \code|v| is its potential parent. Otherwise, our algorithm is somewhat similar to that in CLRS.
+
+We initially color every vertex white and set its parent to nil.
+
+The algorithm searches through each node of the graph, pushing them and a nil parent to the stack. In each iteration of this search, it processes the stack until it is empty.
+
+An iteration of processing the stack consists of popping a pair \code|(u, v)|, and, if the vertex \code|u| is white, visiting it. The visit consists of coloring it grey, adding all its neighbours \code|w| to the stack, paired together with \code|u| as \code|(w, u)|, and then finally coloring it black.
+
+\section*{3.}
+
+We have chosen the following graph for the example:
+
+\newcommand{\examplegraph}[5]{
+\tikz {
+
+\fill[#1] (0, 0) circle[radius=0.25]; \node (a) at (0, 0) [circle] { a }; \draw[black] (a) circle[radius=0.25];
+\fill[#2] (0, -1) circle[radius=0.25]; \node (b) at (0, -1) [circle] { b }; \draw[black] (b) circle[radius=0.25];
+\fill[#3] (1, -1) circle[radius=0.25]; \node (c) at (1, -1) [circle] { c }; \draw[black] (c) circle[radius=0.25];
+\draw (a) edge[-] (b) (b) edge[-] (c) (c) edge[-] (a);
+\fill[#4] (2, 0) circle[radius=0.25]; \node (d) at (2, 0) [circle] { d }; \draw[black] (d) circle[radius=0.25];
+\fill[#5] (2, -1) circle[radius=0.25]; \node (e) at (2, -1) [circle] { e }; \draw[black] (e) circle[radius=0.25];
+\draw (d) edge[-] (e);
+
+}
+}
+
+\examplegraph{white}{white}{white}{white}{white}
+
+The algorithm loops through each vertex of the graph, checking whether they're white. The first such element is (a), which it adds to the stack.
+
+The stack now contains \code|(a, nil)|. This means that it is not empty, and so the algorithm enters the while-loop, where this element is popped off the stack. (a) is colored grey and its neighbours are visited, the first being (b), which is added to the stack paired with (a):
+
+\examplegraph{lightgray}{white}{white}{white}{white}
+
+Now the stack contains \code|(b, a)|. However, there are still more neigbours of (a) to visit. (c) is also visited and added to the stack:
+
+The stack now contains \code|(b, a)| and \code|(c, a)|, with \code|(c, a)| on top. Now that each neighbour has been visited, (a) is colored black and the next iteration of the while-loop begins.
+
+\examplegraph{gray}{white}{white}{white}{white}
+
+(c) is popped off the stack, so that it now contains \code|(b, a)|. (c) is colored grey, and its parent is set to (a). (c)'s neighbours (a) and (b) are added to the stack.
+
+\examplegraph{gray}{white}{lightgray}{white}{white}
+
+The stack now contains \code|(b, a)|, \code|(a, c)| and \code|(b, c)|. (c) is colored black, since it has been visited.
+
+\examplegraph{gray}{white}{gray}{white}{white}
+
+The top of the stack, \code|(b, c)|, is popped, and since (b) is still white its parent is set to (c) and it is colored gray. Each of its neighbours is added to the stack.
+
+\examplegraph{gray}{lightgray}{gray}{white}{white}
+
+The stack now contains \code|(b, a)|, \code|(a, c)|, \code|(a, b)| and \code|(c, b)|. The visiting procedure of (b) ends with (b) being colored black.
+
+\examplegraph{gray}{gray}{gray}{white}{white}
+
+\code|(c, b)| is popped from the stack, but since (c) isn't white it is not visited. The same happens to the rest of the stack, and the processing loop ends as the stack becomes empty.
+
+The outer loop keeps searching and pushes \code|(b, nil)| to the stack, however since again (b) isn't white, it is not visited and the stack becomes empty. The same happens for (c).
+
+Finally, the outer loop finds (d) and pushes \code|(d, nil)| to the stack. It gets popped and colored gray, and its neighbour (e) is added to the stack.
+
+\examplegraph{gray}{gray}{gray}{lightgray}{white}
+
+After the neighbour has been pushed, (d) is colored black.
+
+\examplegraph{gray}{gray}{gray}{gray}{white}
+
+(e) is popped from the stack, colored gray, and its parent is set to (d). Its neighbour (d) is pushed.
+
+\examplegraph{gray}{gray}{gray}{gray}{lightgray}
+
+Next, (e) is colored black.
+
+\examplegraph{gray}{gray}{gray}{gray}{gray}
+
+Since (d) isn't white, it doesn't get visited, and the algorithm terminates.
 
 \end{document}	
