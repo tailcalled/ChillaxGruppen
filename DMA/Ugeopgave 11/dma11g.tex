@@ -96,4 +96,10 @@ Next, (e) is colored black.
 
 Since (d) isn't white, it doesn't get visited, and the algorithm terminates.
 
+\section*{4.}
+
+The algorithm has a runtime of \(\Theta(|V| + |E|)\). To see this, note first that \code|DFS-visit| has a color-based guard that prevents the central part of it from being run more than once on each node. Note that due to the outer loop in \code|DFS| that visits each node and pushes them to the stack, it will also get called at least once on each node. \code|DFS-visit| pushes each outgoing edge to the stack, and so calling it for each vertex means that every edge will get pushed.
+
+\code|DFS-visit| takes time proportional to the amount of edges pushed to the stack, as each edge will also be popped again. But since it also iterates through each vertex, it must then take \(\Theta(|V| + |E|)\) time.
+
 \end{document}	

@@ -16,5 +16,3 @@ DFS-visit(u, p)
 		for each v in adj(u)
 			push(S,(v, u))
 		u.Color = black
-		
-
