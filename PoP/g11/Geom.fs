@@ -15,6 +15,13 @@ type V3(x, y, z: float) = class
 
    member this.Norm2 = this*this
    member this.Norm = sqrt this.Norm2
-   member this.Unit = this / this.Norm
+   member this.Unit =
+      let norm = this.Norm
+      // return zero vector instead of NaN
+      // when taking unit vector of zero
+      if norm < 1E-20
+         this
+      else
+         this / norm
 
 end
