@@ -13,13 +13,13 @@ type V3(x, y, z: float) = class
    static member (~-) (v: V3) = v * (-1.0)
    static member (-) (v1: V3, v2: V3) = v1 + (-v2)
 
-   member this.Norm2 = this*this
+   member this.Norm2 = this .* this
    member this.Norm = sqrt this.Norm2
    member this.Unit =
       let norm = this.Norm
       // return zero vector instead of NaN
       // when taking unit vector of zero
-      if norm < 1E-20
+      if norm < 1E-20 then
          this
       else
          this / norm
