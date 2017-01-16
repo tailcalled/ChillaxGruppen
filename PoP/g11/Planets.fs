@@ -1,10 +1,12 @@
 module Planets
 open Geom
 
-type Planet(pos: V3, vel: V3) = class
+type Planet(pos: V3, vel: V3, mass : float, name : string) = class
    
    member this.Pos = pos
    member this.Vel = vel
+   member this.Mass = mass
+   member this.Name = name
 
 end
 
@@ -38,4 +40,13 @@ let readPlanet planetName =
          entry :: readEntries ()
    readEntries ()
 
-printfn "%A" (readPlanet "Earth")
+let posPlanet (p1 : Planet) (p2 : Planet) (dt : float) =
+   let G = 6.67384E-11
+   let r = p2.Pos - p1.Pos
+   let acc = r * (-(G*p2.Mass) / (r.Norm**2.0))
+   let vel = acc * dt
+   //let pos = vel * dt
+   //Planet(pos, vel, p1.Mass, p1.Name)
+   ()
+
+//printfn "%A" (readPlanet "Earth")
