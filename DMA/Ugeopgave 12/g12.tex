@@ -1,0 +1,63 @@
+\documentclass[a4paper]{article}
+
+\input{../../preamble.tex}
+\usepackage{amssymb}
+
+\title{DMA 12g}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Chr. Søderblom}
+
+\begin{document}
+
+\maketitle
+
+\section*{Part 1}
+
+\subsection*{(a)}
+
+We need to show that given a path \(e_n\) with \(0 \le n < k\), we can rewrite \(-\log(\prod\limits_{0 \le n < k} w(e_n)) = \sum\limits_{0 \le n < k} - \log(w(e_n))\).
+
+We will do this by induction on \(k\).
+
+When \(k = 0\), we have:
+
+\[
+\begin{aligned}
+-\log(\prod\limits_{n \in \O} w(e_n)) &= -\log(1) \\
+&= 0 \\
+&= \sum\limits_{n \in \O} - \log(w(e_n))
+\end{aligned}
+\]
+
+When \(k = j + 1\), we have:
+
+\[
+\begin{aligned}
+-\log(\prod\limits_{0 \le n < j + 1} w(e_n)) &=  -\log(w(e_j) \cdot \prod\limits_{0 \le n < j} w(e_n)) \\
+&= -\log(w(e_j)) - \log(\prod\limits_{0 \le n < j} w(e_n)) \\
+&= -\log(w(e_j)) + \sum\limits_{0 \le n < j} - \log(w(e_n)) \\
+&= \sum\limits_{0 \le n < k} - \log(w(e_n))
+\end{aligned}
+\]
+
+\subsection*{(b)}
+
+To find the most probable path, we wish to maximize \(\prod\limits_{0 \le n < k} w(e_n)\). This is equivalent to minimizing \(- \log\prod\limits_{0 \le n < k} w(e_n)\), which we have just shown is the same as \(\sum\limits_{0 \le n < k} - \log(w(e_n))\). This is equivalent to finding the shortests path with a weight function \(w'(e) = -\log(w(e))\). We use Dijkstra's algorithm for this:
+
+\codeInput{pathfind.fsx}
+
+\section*{Part 2}
+
+\subsection*{(a)}
+
+\(\delta_{BFS}(s, v)\) represents the length of the shortest path from \(s\) to \(v\), whereas \(\delta_{SP}(s, v)\) represents the cost of the lowest-cost path from \(s\) to \(v\). However, when \(w(e) = 1\), the cost of a path and its length coincides, and as such \(\delta_{BFS}\) and \(\delta_{SP}\) will be equal.
+
+\subsection*{(b)}
+
+A node is black during BFS if it has been visited. This means that the processing for that node is done.
+
+The set \(S\) represents the nodes for which the shortest distance has been determined. Similarly to a node in BFS being black, a node being in \(S\) means that the processing for that node is done.
+
+\subsection*{(c)}
+
+The loop invariant states that at the start of each iteration of the while loop, \code|v.d = |\(\delta\)\code|(s, v)| for each vertex \code|v|. When Dijkstra's algorithm visits a node \code|u|, it has already visited all nodes \code|w| with a distance \(\delta(s, w)\) less than \(\delta(s, u)\). This means that any node in \(V\) with distance less than \(\delta(s, u)\) is already in \(S\), and so the nodes \code|v| in \(V \setminus S\) must have a distance greater than or equal to that of \code|u| from \code|s|.
+\end{document}	
