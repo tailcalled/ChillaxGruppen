@@ -3,7 +3,7 @@ open Geom
 open Planets
 open Util
 
-let system = new SolarSystem()
+let system = new SolarSystem(0.0)
 
 let dataMap =
    let mutable acc = Map.empty
@@ -11,9 +11,10 @@ let dataMap =
       for entry in entries do
          let time = entryTime entry
          let pos = computePosition entry
-         let planetmap = match Map.tryFind time acc with
-         | Some x -> x
-         | None -> Map.empty
+         let planetmap =
+            match Map.tryFind time acc with
+            | Some x -> x
+            | None -> Map.empty
          let newmap = Map.add name pos planetmap
          acc <- Map.add time newmap acc
    acc
