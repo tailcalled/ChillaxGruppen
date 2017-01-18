@@ -13,6 +13,9 @@ type Planet(pos: V3, vel: V3, mass : float, name : string) = class
 
 end
 
+type PlanetEntry = float * float * float * float * float
+type PlanetData = string * float * PlanetEntry list
+
 let readPlanet planetName =
    use stream = System.IO.File.OpenText ("data/" + planetName + ".txt")
    let readNumber text =
@@ -52,10 +55,10 @@ let planetNames =
    ["Earth"; "Jupiter"; "Mars"; "Mercury";
     "Neptune"; "Pluto"; "Saturn"; "Uranus"; "Venus"]
 
-let entryTime (time, lon, lat, rad, rdot) = time
+let entryTime ((time, lon, lat, rad, rdot): PlanetEntry) = time
 let sinD x = sin (x / 180.0 * 3.1415)
 let cosD x = cos (x / 180.0 * 3.1415)
-let computePosition (time, l, b, r, rdot) =
+let computePosition ((time, l, b, r, rdot): PlanetEntry) =
    V3(r * cosD b * cosD l, r * cosD b * sinD l, r * sinD b)
 
 let constructPlanets planetData time =
