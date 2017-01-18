@@ -20,7 +20,7 @@ type V3(x, y, z: float) = class
    member this.Norm = sqrt this.Norm2
    member this.Unit =
       let norm = this.Norm
-      // return zero vector instead of NaN
+      // return zero vector instead of NaN   
       // when taking unit vector of zero
       if norm < 1E-20 then
          this

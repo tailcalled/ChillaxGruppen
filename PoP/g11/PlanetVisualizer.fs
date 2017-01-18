@@ -41,7 +41,7 @@ let paint (gfx : Graphics) =
       gfx.FillEllipse(b, x - sz, y - sz, 2.0F * sz, 2.0F * sz)
       gfx.DrawString (planet.Name, font, Brushes.White, x, y)
 
-let speed = 1
+let speed = 20
 let runSimulation () =
    for i = 1 to speed do
       solarSystem <- simulate dt solarSystem
