@@ -58,37 +58,32 @@ let cosD x = cos (x / 180.0 * 3.1415)
 let computePosition (time, l, b, r, rdot) =
    V3(r * cosD b * cosD l, r * cosD b * sinD l, r * sinD b)
 
-let constructPlanets planets =
-   let rec findTime times =
-      let maxTime = times |> List.map List.head |> List.max
-      if times |> List.forall (fun ts -> ts.[0] = maxTime) then
-         maxTime
-      else
-         findTime (times |> List.map (dropWhile ((>) maxTime)))
-   let firstTime =
-      findTime (
-         planets |> List.map (
-            fun (name, mass, entries) -> List.map entryTime entries
-         ) |> List.tail
-      ) + 1.0
-   let planetEntries = planets |> List.map (fun (name, mass, entries) ->
-         let (a, b) = entries |> splitWhile (entryTime >> (>) firstTime)
-         (name, mass, List.last a, b)
-      )
-   let constructPlanet (name, mass, e0, e1 :: e2 :: _) =
+let constructPlanets planetData time =
+   // We've been informally asked to make sure our system tolerates
+   // missing rows where the position at some time isn't available.
+   let constructPlanet (name, mass, entries) =
+      let t = entries |> List.map entryTime |> List.minBy ((-) time >> abs)
+      let tI = entries |> List.map entryTime |> List.findIndex ((=) t)
+      let ix1 =
+         if tI = 0 then tI + 1
+         elif tI = entries.Length - 1 then tI - 1
+         else tI
+      let e0 = entries.[ix1 - 1]
+      let e1 = entries.[ix1]
+      let e2 = entries.[ix1 + 1]
       let p0 = computePosition e0
       let p1 = computePosition e1
       let p2 = computePosition e2
       let deltaT = entryTime e2 - entryTime e0
       let v = (p2 - p0) / deltaT
-      Planet(p1, v, mass, name)
-   (firstTime, planetEntries |> List.map constructPlanet)
+      (entryTime e1, Planet(p1, v, mass, name))
+   let (times, planets) = planetData |> List.map constructPlanet |> List.unzip
+   (times |> List.average, planets)
 
 let planetData = planetNames |> List.map readPlanet
-let (t0, planets) = constructPlanets planetData
-let sol = new Planet(V3(0.0, 0.0, 0.0), V3(0.0, 0.0, 0.0), 1.989E30, "Sol")
+let (t0, planets) = constructPlanets planetData 0.0
+let sol = new Planet(V3(0.0, 0.0, 0.0), V3(0.0, 0.0, 0.0), 1.98855E30, "Sol")
 
-/// <param name="dt">Delta T in days</param>
 let simulate dt (system : Planet list) =
    system |> List.map (fun planet ->
       let (acc: V3, jerk: V3) =
@@ -115,28 +110,26 @@ let simulate dt (system : Planet list) =
       new Planet(newPos, newVel, planet.Mass, planet.Name)
    )
 
-type SolarSystem() = class
-   
-   let initSystem = sol :: planets
-   let initTime = t0
+#nowarn "40"
+type SolarSystem(initSystem: Planet list, initTime: float) = class
 
-   let simulateSeq dt =
-      let mutable now = initSystem
-      Seq.cache (seq {
-         while true do
-            for i = 1 to 1000 do
-               now <- simulate (dt / 1000.0) now
-            yield now
-      })
+   let granularity = 10
 
-   let future = simulateSeq 1.0
-   let past = simulateSeq -1.0
+   let rec at = memo (function
+      | 0 -> initSystem
+      | n ->
+         let dir = if n < 0 then -1 else 1
+         let state = at (n - dir)
+         repeat granularity (simulate (float dir / float granularity)) state)
 
    let day n =
       let m = n - int initTime
-      if m < 0 then Seq.item (-m - 1) past
-      else if m > 0 then Seq.item (m - 1) future
-      else initSystem
+      at m
+
+   new(time: float) =
+      let (t, ps) = constructPlanets planetData time
+      new SolarSystem(sol :: ps, t)
+
    member this.Time fakeT =
       let t = fakeT - 0.5
       let date = int t
@@ -149,5 +142,6 @@ type SolarSystem() = class
             let vel = pl0.Vel * ifrac + pl1.Vel * frac
             new Planet(pos, vel, pl0.Mass, pl0.Name)
          )
+   member this.T0 = t0
 
 end
