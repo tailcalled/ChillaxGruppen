@@ -25,6 +25,7 @@ let form = new PlanetsForm()
 let mutable dt = 0.0
 let mutable dtSmooth = 0.0
 let font = new Font("Arial", 16.0F)
+let mutable seekYear = 0
 
 let paint (gfx : Graphics) =
    let width = form.ClientSize.Width
@@ -41,7 +42,7 @@ let paint (gfx : Graphics) =
    let fps = 1.0 / dtSmooth
    let daysSince1962Jan20 = time - 2439126.5
    let daysSince1962Jan1 = daysSince1962Jan20 - 19.0
-   let years = int (daysSince1962Jan1 / 365.0)
+   let years = int <| floor (daysSince1962Jan1 / 365.0)
    let year = years + 1962
    let daysSinceYear = daysSince1962Jan1 - float years * 365.0
    let months =
@@ -51,10 +52,18 @@ let paint (gfx : Graphics) =
    let month = months.[int (daysSinceYear * 12.0 / 365.0)]
    let lines =
       [
-         sprintf "FPS: %A" fps;
+         sprintf "FPS: %A" (int fps);
          sprintf "%s%A" month year;
-         sprintf "Zoom: %A" zoomModes.Head;
+         sprintf "Zoom: %A (%A pixels/AU)" zoomModes.Head (int zoom);
          sprintf "Speed: %A days/second" (speed - 1.0);
+         "";
+         sprintf "Seek to: [%A]" seekYear;
+         "Use number keys";
+         "to enter a year";
+         "to skip the";
+         "simulation to.";
+         "Press enter to go";
+         "to this year.";
          "";
          "Press [Z] to";
          "change zoom";
@@ -67,7 +76,7 @@ let paint (gfx : Graphics) =
    for (i, line) in List.zip [0 .. lines.Length - 1] lines do
       gfx.DrawString(line, font, Brushes.White, 0.0F, 20.0F * float32 i)
    let rand = new System.Random(5918421)
-   for i = 0 to 5000 do
+   for i = 0 to 2500 do
       let x = rand.Next(width)
       let y = rand.Next(height)
       gfx.FillRectangle (Brushes.White, x, y, 1, 1)
@@ -82,7 +91,8 @@ let paint (gfx : Graphics) =
 
 let runSimulation () =
    if 1.0 / dt < 10.0 then
-      speed <- 1.0
+      if speed > 1.0 then
+         speed <- speed / 2.0
    else
       time <- time + dt * (speed - 1.0)
 
@@ -96,6 +106,28 @@ form.KeyDown.Add (fun e ->
    | Keys.Up -> speed <- speed * 2.0
    | Keys.Down ->
       if speed > 1.0 then speed <- speed / 2.0
+   | Keys.D0 -> seekYear <- seekYear * 10
+   | Keys.D1 -> seekYear <- seekYear * 10 + 1
+   | Keys.D2 -> seekYear <- seekYear * 10 + 2
+   | Keys.D3 -> seekYear <- seekYear * 10 + 3
+   | Keys.D4 -> seekYear <- seekYear * 10 + 4
+   | Keys.D5 -> seekYear <- seekYear * 10 + 5
+   | Keys.D6 -> seekYear <- seekYear * 10 + 6
+   | Keys.D7 -> seekYear <- seekYear * 10 + 7
+   | Keys.D8 -> seekYear <- seekYear * 10 + 8
+   | Keys.D9 -> seekYear <- seekYear * 10 + 9
+   | Keys.Back -> seekYear <- seekYear / 10
+   | Keys.Enter ->
+      let since1962 = float seekYear - 1962.0
+      let days = since1962 * 365.0
+      let daysSinceJan20 = days - 19.0
+      let newTime = daysSinceJan20 + 2439126.5
+      let yearsSkipped = int ((newTime - time) / 365.0)
+      for i = 1 to abs yearsSkipped do
+         printfn "%A %A" i yearsSkipped
+         let _ = solarSystem.Time (time + float (i * 365 * sign yearsSkipped))
+         ()
+      time <- newTime
    | _ -> ()
 )
 let clock = new System.Timers.Timer(1000.0 / 120.0)
@@ -104,7 +136,7 @@ clock.Elapsed.Add (fun e ->
    let nowTime = float e.SignalTime.Ticks / 10000000.0
    if lastTime <> 0.0 then
       dt <- nowTime - lastTime
-      dtSmooth <- dtSmooth * 0.99 + dt * 0.01
+      dtSmooth <- dtSmooth * 0.95 + dt * 0.05
       runSimulation ()
       form.Refresh ()
    lastTime <- nowTime

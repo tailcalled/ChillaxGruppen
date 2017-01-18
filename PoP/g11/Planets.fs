@@ -64,7 +64,10 @@ let constructPlanets planetData time =
    let constructPlanet (name, mass, entries) =
       let t = entries |> List.map entryTime |> List.minBy ((-) time >> abs)
       let tI = entries |> List.map entryTime |> List.findIndex ((=) t)
-      let ix1 = if tI = 0 then tI + 1 else tI
+      let ix1 =
+         if tI = 0 then tI + 1
+         elif tI = entries.Length - 1 then tI - 1
+         else tI
       let e0 = entries.[ix1 - 1]
       let e1 = entries.[ix1]
       let e2 = entries.[ix1 + 1]
@@ -81,7 +84,6 @@ let planetData = planetNames |> List.map readPlanet
 let (t0, planets) = constructPlanets planetData 0.0
 let sol = new Planet(V3(0.0, 0.0, 0.0), V3(0.0, 0.0, 0.0), 1.98855E30, "Sol")
 
-/// <param name="dt">Delta T in days</param>
 let simulate dt (system : Planet list) =
    system |> List.map (fun planet ->
       let (acc: V3, jerk: V3) =
@@ -108,25 +110,21 @@ let simulate dt (system : Planet list) =
       new Planet(newPos, newVel, planet.Mass, planet.Name)
    )
 
+#nowarn "40"
 type SolarSystem(initSystem: Planet list, initTime: float) = class
 
-   let simulateSeq dt =
-      let mutable now = initSystem
-      Seq.cache (seq {
-         while true do
-            for i = 1 to 10 do
-               now <- simulate (dt / 10.0) now
-            yield now
-      })
+   let granularity = 10
 
-   let future = simulateSeq 1.0
-   let past = simulateSeq -1.0
+   let rec at = memo (function
+      | 0 -> initSystem
+      | n ->
+         let dir = if n < 0 then -1 else 1
+         let state = at (n - dir)
+         repeat granularity (simulate (float dir / float granularity)) state)
 
    let day n =
       let m = n - int initTime
-      if m < 0 then Seq.item (-m - 1) past
-      else if m > 0 then Seq.item (m - 1) future
-      else initSystem
+      at m
 
    new(time: float) =
       let (t, ps) = constructPlanets planetData time
