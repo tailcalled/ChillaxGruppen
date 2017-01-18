@@ -24,6 +24,15 @@ Figure \ref{uml} shows the UML diagram we made for this task.
 \label{uml}
 \end{figure}
 
+To easily be able to calculate with 3d-vectore we made an vector class called VE with som generic functions.
+To be able to store and construct planets, we made an Planet class where its posistion and velocity are represented as vectors. We decided to make the attributes constants because of that to update a planets posistion and velocity, we contructed and new instance of that planet with the same mass and name but new posistion and velocity.
+
+The PlanetsForm class inherit System.Form and initilizes a Form we uses to display oure solar system.
+
+
+To find the posistion of the planets in a solar system, we made made a class called \code|SolarSystem| that stores a list of \code|Planet|. This class can simulates the planets movements in the solar system by calculating the planets posistion and velocity after a given time.
+
+
 \subsection{Algorithms}
 
 

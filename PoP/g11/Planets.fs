@@ -142,6 +142,6 @@ type SolarSystem(initSystem: Planet list, initTime: float) = class
             let vel = pl0.Vel * ifrac + pl1.Vel * frac
             new Planet(pos, vel, pl0.Mass, pl0.Name)
          )
-   member this.T0 = t0
+   member this.T0 = initTime
 
 end
