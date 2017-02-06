@@ -14,36 +14,23 @@
 
 \subsection*{(a)}
 
-We need to show that given a path \(e_n\) with \(0 \le n < k\), we can rewrite \(-\log(\prod\limits_{0 \le n < k} w(e_n)) = \sum\limits_{0 \le n < k} - \log(w(e_n))\).
+We need to show that given a path \(e_n\) with \(0 \le n < k\), we can rewrite \(-\log(w(e_0)\cdot w(e_1)\cdot \dots \cdot w(e_n))\) as a sum.
 
-We will do this by induction on \(k\).
-
-When \(k = 0\), we have:
+To do this, we exploit the rule \(\log(a\cdot b) = \log(a) + \log(b)\). We reason as follows:
 
 \[
 \begin{aligned}
--\log(\prod\limits_{n \in \O} w(e_n)) &= -\log(1) \\
-&= 0 \\
-&= \sum\limits_{n \in \O} - \log(w(e_n))
+-\log(w(e_0)\cdot w(e_1)\cdot \dots \cdot w(e_n)) &= -\log(w(e_0)) - \log(w(e_1)\cdot \dots \cdot w(e_n)) \\
+&=  -\log(w(e_0)) - \log(w(e_1)) - \log(\dots \cdot w(e_n)) \\
+&= \dots \\
+&= -\log(w(e_0)) - \log(w(e_1)) - \dots - \log(w(e_n))
 \end{aligned}
 \]
-
-When \(k = j + 1\), we have:
-
-\[
-\begin{aligned}
--\log(\prod\limits_{0 \le n < j + 1} w(e_n)) &=  -\log(w(e_j) \cdot \prod\limits_{0 \le n < j} w(e_n)) \\
-&= -\log(w(e_j)) - \log(\prod\limits_{0 \le n < j} w(e_n)) \\
-&= -\log(w(e_j)) + \sum\limits_{0 \le n < j} - \log(w(e_n)) \\
-&= \sum\limits_{0 \le n < k} - \log(w(e_n))
-\end{aligned}
-\]
-
 \subsection*{(b)}
 
 To find the most probable path, we wish to maximize \(\prod\limits_{0 \le n < k} w(e_n)\). This is equivalent to minimizing \(- \log\prod\limits_{0 \le n < k} w(e_n)\), which we have just shown is the same as \(\sum\limits_{0 \le n < k} - \log(w(e_n))\). This is equivalent to finding the shortests path with a weight function \(w'(e) = -\log(w(e))\). We use Dijkstra's algorithm for this:
 
-\codeInput{pathfind.fsx}
+\codeInput{pathfind.pseudocode}
 
 \section*{Part 2}
 

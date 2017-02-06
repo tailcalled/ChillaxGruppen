@@ -1,0 +1,26 @@
+-- assuming to functions on graphs:
+--    G.out(n)    gives the nodes v with a connection [n -> v]
+--    G.in(n)     gives the nodes v with a connection [v -> n]
+
+PathFind (G, a, b):
+   let Q = new PriorityQueue()
+   for node in G.V:
+      node.dist = infinity
+    -- The first value is the distance/priority, second is the node.
+    -- This queue always returns the element with least distance
+    -- when popping.
+   Q.push(0.0, a)
+   while not Q.empty do:
+      let (distance, node) = Q.pop()
+      if node.dist > distance then:
+         node.dist = distance
+         for n in G.out(node) do:
+            let cost = -log(G.weight(node, n))
+            Q.push(distance + cost, n)
+   if b.dist = infinity then:
+      return null
+   let path = [b]
+   while path[0] != a do:
+      let piece = member of G.in(path[0]) which minimizes piece.dist
+      path = prepend piece to path
+      return path

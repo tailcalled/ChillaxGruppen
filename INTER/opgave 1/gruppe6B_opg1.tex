@@ -1,0 +1,37 @@
+\documentclass[a4paper]{article}
+
+\input{../../preamble.tex}
+
+\title{INTER 1}
+\author{Carl Dybdahl, Patrick Hartvigsen, Emil Chr. Søderblom}
+\usepackage[danish]{babel}
+
+\begin{document}
+
+\maketitle
+
+\section{Effektivetskrav} \label{efficiency}
+
+Højst 5\% af hundrede førstegangsbrugere må fejle den følgende sekvens af tests:
+
+\begin{itemize}
+\item Brugerne skal på 10 minutter være i stand til at bestille en Opel Astra i Hamborg den 25. februar kl. 13:00, som skal afleveres i Berlin den 28. februar kl. 12:00.
+\item Brugerne skal kunne afbestille denne bil på 5 minutter.
+\item Brugerne, som nu har noget erfaring med websiden, skal på 5 minutter være i stand til at leje en Tesla Model S i Berlin den 1. marts kl. 12:00, som skal afleveres i Berlin den 1. marts kl. 17:00.
+\item I denne test indeholder systemet på forhånd en bestilling for brugeren af en bil med Renault Grand Scenic i Frankfurt den 2. marts kl 13:00 som skal afleveres i Frankfurt den 3. marts kl 12:00. Brugeren skal på 10 minutter være i stand til at finde ud af biltype, biludlejeraddresse, opsamlingstidspunkt og afleveringstidspunkt.
+\end{itemize}
+
+\section{Tilfredshedskrav}
+
+De hundrede testpersoner fra sektion \ref{efficiency} bliver spurgt om følgende udsagn, med svarmuligheder "Helt uenig", "Uenig", "Hverken enig eller uenig", "Enig", "Helt enig":
+
+\begin{itemize}
+\item Det er nemt at bestille en bil på hjemmesiden.
+\item Det er let at overskue priserne.
+\item Forsinkringens dækning er tydeligt fremvist og godt forklaret.
+\item Hjemmesidens design er pænt.
+\end{itemize}
+
+Svarene bliver konverteret til en skala fra 1 til 5, hvor 1 er "Helt Uenig" og 5 er "Helt Enig". Gennemsnitssvaret for første udsagn skal være mindst 4, for andet og tredje udsagn mindst 3.5, og for fjerde udsagn mindst 3. Maksimalt 20\% af brugerne må have svaret "Helt Uenig" ved et spørgsmål.
+
+\end{document}	
